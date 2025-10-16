@@ -3,71 +3,106 @@
 #include "myproject.h"
 #include "parameters.h"
 
+
 void myproject(
     input_t input_1[N_INPUT_1_1*N_INPUT_2_1],
-    result_t layer14_out[N_LAYER_12]
+    result_t layer13_out[N_LAYER_13]
 ) {
 
     // hls-fpga-machine-learning insert IO
     #pragma HLS ARRAY_RESHAPE variable=input_1 complete dim=0
-    #pragma HLS ARRAY_PARTITION variable=layer14_out complete dim=0
-    #pragma HLS INTERFACE ap_vld port=input_1,layer14_out 
-    #pragma HLS DATAFLOW 
+    #pragma HLS ARRAY_PARTITION variable=layer13_out complete dim=0
+    #pragma HLS INTERFACE ap_vld port=input_1,layer13_out 
+    #pragma HLS DATAFLOW
 
+    // hls-fpga-machine-learning insert load weights
 #ifndef __SYNTHESIS__
     static bool loaded_weights = false;
     if (!loaded_weights) {
-        // hls-fpga-machine-learning insert load weights
-        nnet::load_weights_from_txt<weight15_t, 140>(w15, "w15.txt");
-        nnet::load_weights_from_txt<bias15_t, 10>(b15, "b15.txt");
-        nnet::load_weights_from_txt<weight16_t, 100>(w16, "w16.txt");
-        nnet::load_weights_from_txt<bias16_t, 10>(b16, "b16.txt");
-        nnet::load_weights_from_txt<weight9_t, 100>(w9, "w9.txt");
-        nnet::load_weights_from_txt<bias9_t, 10>(b9, "b9.txt");
-        nnet::load_weights_from_txt<weight12_t, 10>(w12, "w12.txt");
-        nnet::load_weights_from_txt<bias12_t, 1>(b12, "b12.txt");
-        loaded_weights = true;
-    }
+        nnet::load_weights_from_txt<weight3_t, 140>(w3, "w3.txt");
+        nnet::load_weights_from_txt<bias3_t, 10>(b3, "b3.txt");
+        nnet::load_weights_from_txt<weight6_t, 100>(w6, "w6.txt");
+        nnet::load_weights_from_txt<bias6_t, 10>(b6, "b6.txt");
+        nnet::load_weights_from_txt<weight10_t, 100>(w10, "w10.txt");
+        nnet::load_weights_from_txt<bias10_t, 10>(b10, "b10.txt");
+        nnet::load_weights_from_txt<weight13_t, 10>(w13, "w13.txt");
+        nnet::load_weights_from_txt<bias13_t, 1>(b13, "b13.txt");
+        loaded_weights = true;    }
 #endif
-
     // ****************************************
     // NETWORK INSTANTIATION
     // ****************************************
 
     // hls-fpga-machine-learning insert layers
 
-    layer15_t layer15_out[N_OUTPUTS_15*N_FILT_15];
-    #pragma HLS ARRAY_PARTITION variable=layer15_out complete dim=0
-    nnet::pointwise_conv_1d_cl<input_t, layer15_t, config15>(input_1, layer15_out, w15, b15); // q_conv1d
+    layer2_t layer2_out[N_INPUT_1_1*N_INPUT_2_1];
+    #pragma HLS ARRAY_PARTITION variable=layer2_out complete dim=0
 
-    layer4_t layer4_out[N_OUTPUTS_2*N_FILT_2];
-    #pragma HLS ARRAY_PARTITION variable=layer4_out complete dim=0
-    nnet::relu<layer15_t, layer4_t, relu_config4>(layer15_out, layer4_out); // q_activation
+    layer3_t layer3_out[N_OUTPUTS_3*N_FILT_3];
+    #pragma HLS ARRAY_PARTITION variable=layer3_out complete dim=0
 
-    layer16_t layer16_out[N_OUTPUTS_16*N_FILT_16];
-    #pragma HLS ARRAY_PARTITION variable=layer16_out complete dim=0
-    nnet::pointwise_conv_1d_cl<layer4_t, layer16_t, config16>(layer4_out, layer16_out, w16, b16); // q_conv1d_1
+    layer5_t layer5_out[N_OUTPUTS_3*N_FILT_3];
+    #pragma HLS ARRAY_PARTITION variable=layer5_out complete dim=0
 
-    layer7_t layer7_out[N_OUTPUTS_5*N_FILT_5];
-    #pragma HLS ARRAY_PARTITION variable=layer7_out complete dim=0
-    nnet::relu<layer16_t, layer7_t, relu_config7>(layer16_out, layer7_out); // q_activation_1
+    layer6_t layer6_out[N_OUTPUTS_6*N_FILT_6];
+    #pragma HLS ARRAY_PARTITION variable=layer6_out complete dim=0
 
-    layer8_t layer8_out[N_FILT_8];
+    layer8_t layer8_out[N_OUTPUTS_6*N_FILT_6];
     #pragma HLS ARRAY_PARTITION variable=layer8_out complete dim=0
-    nnet::global_pooling1d_cl<layer7_t, layer8_t, config8>(layer7_out, layer8_out); // global_average_pooling1d
 
-    layer9_t layer9_out[N_LAYER_9];
+    layer9_t layer9_out[N_FILT_9];
     #pragma HLS ARRAY_PARTITION variable=layer9_out complete dim=0
-    nnet::dense<layer8_t, layer9_t, config9>(layer8_out, layer9_out, w9, b9); // q_dense
 
-    layer11_t layer11_out[N_LAYER_9];
-    #pragma HLS ARRAY_PARTITION variable=layer11_out complete dim=0
-    nnet::relu<layer9_t, layer11_t, relu_config11>(layer9_out, layer11_out); // q_activation_2
+    layer10_t layer10_out[N_LAYER_10];
+    #pragma HLS ARRAY_PARTITION variable=layer10_out complete dim=0
 
-    layer12_t layer12_out[N_LAYER_12];
+    layer12_t layer12_out[N_LAYER_10];
     #pragma HLS ARRAY_PARTITION variable=layer12_out complete dim=0
-    nnet::dense<layer11_t, layer12_t, config12>(layer11_out, layer12_out, w12, b12); // q_dense_1
 
-    nnet::sigmoid<layer12_t, result_t, sigmoid_config14>(layer12_out, layer14_out); // sigmoid
+    nnet::linear<input_t, layer2_t, linear_config2>(input_1, layer2_out); // q_input
+#ifndef __SYNTHESIS__
+    nnet::save_layer_output<layer2_t>(layer2_out, "q_input", N_INPUT_1_1*N_INPUT_2_1);
+#endif
+
+    nnet::pointwise_conv_1d_cl<layer2_t, layer3_t, config15>(layer2_out, layer3_out, w3, b3); // q_conv1d
+#ifndef __SYNTHESIS__
+    nnet::save_layer_output<layer3_t>(layer3_out, "q_conv1d", N_OUTPUTS_3*N_FILT_3);
+#endif
+
+    nnet::relu<layer3_t, layer5_t, relu_config5>(layer3_out, layer5_out); // q_activation
+#ifndef __SYNTHESIS__
+    nnet::save_layer_output<layer5_t>(layer5_out, "q_activation", N_OUTPUTS_3*N_FILT_3);
+#endif
+
+    nnet::pointwise_conv_1d_cl<layer5_t, layer6_t, config16>(layer5_out, layer6_out, w6, b6); // q_conv1d_1
+#ifndef __SYNTHESIS__
+    nnet::save_layer_output<layer6_t>(layer6_out, "q_conv1d_1", N_OUTPUTS_6*N_FILT_6);
+#endif
+
+    nnet::relu<layer6_t, layer8_t, relu_config8>(layer6_out, layer8_out); // q_activation_1
+#ifndef __SYNTHESIS__
+    nnet::save_layer_output<layer8_t>(layer8_out, "q_activation_1", N_OUTPUTS_6*N_FILT_6);
+#endif
+
+    nnet::global_pooling1d_cl<layer8_t, layer9_t, config9>(layer8_out, layer9_out); // global_average_pooling1d
+#ifndef __SYNTHESIS__
+    nnet::save_layer_output<layer9_t>(layer9_out, "global_average_pooling1d", N_FILT_9);
+#endif
+
+    nnet::dense<layer9_t, layer10_t, config10>(layer9_out, layer10_out, w10, b10); // q_dense
+#ifndef __SYNTHESIS__
+    nnet::save_layer_output<layer10_t>(layer10_out, "q_dense", N_LAYER_10);
+#endif
+
+    nnet::relu<layer10_t, layer12_t, relu_config12>(layer10_out, layer12_out); // q_activation_2
+#ifndef __SYNTHESIS__
+    nnet::save_layer_output<layer12_t>(layer12_out, "q_activation_2", N_LAYER_10);
+#endif
+
+    nnet::dense<layer12_t, result_t, config13>(layer12_out, layer13_out, w13, b13); // q_dense_1
+#ifndef __SYNTHESIS__
+    nnet::save_layer_output<result_t>(layer13_out, "q_dense_1", N_LAYER_13);
+#endif
 
 }
+

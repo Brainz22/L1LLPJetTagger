@@ -1,86 +1,132 @@
 Backend: Vivado
 ClockPeriod: 5
+ClockUncertainty: 12.5%
 HLSConfig:
   LayerName:
     global_average_pooling1d:
       Precision:
-        result: fixed<16,6>
-      Trace: false
+        accum: fixed<16,12, AP_TRN, AP_SAT>
+        result: fixed<14,8, AP_TRN, AP_SAT>
+      ReuseFactor: 1
+      Trace: true
     input_1:
-      Precision: fixed<10,3>
-      Trace: false
+      Precision: fixed<12,6,AP_TRN, AP_SAT>
+      Trace: true
     q_activation:
       Precision:
-        result: ufixed<8,0,RND_CONV,SAT>
-      Trace: false
+        result: ufixed<14,8, AP_TRN, AP_SAT>
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: true
     q_activation_1:
       Precision:
-        result: ufixed<8,0,RND_CONV,SAT>
-      Trace: false
+        result: ufixed<10,5, AP_TRN, AP_SAT>
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: true
     q_activation_2:
       Precision:
-        result: ufixed<8,0,RND_CONV,SAT>
-      Trace: false
+        result: ufixed<14, 8, AP_TRN, AP_SAT>
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: true
     q_conv1d:
-      ConvImplementation: Pointwise
+      ConvImplementation: LineBuffer
+      ParallelizationFactor: 1
       Precision:
-        bias: fixed<8,4>
-        result: fixed<16,6>
-        weight: fixed<8,4>
+        accum: fixed<14,8, AP_TRN, AP_SAT>
+        bias: fixed<10,5,TRN,WRAP,0>
+        result: fixed<14,8, AP_TRN, AP_SAT>
+        weight: fixed<10,5,TRN,WRAP,0>
       ReuseFactor: 2
-      Trace: false
+      Trace: true
     q_conv1d_1:
-      ConvImplementation: Pointwise
+      ConvImplementation: LineBuffer
+      ParallelizationFactor: 1
       Precision:
-        bias: fixed<8,4>
-        result: fixed<16,6>
-        weight: fixed<8,4>
+        accum: fixed<16, 12, AP_TRN, AP_SAT>
+        bias: fixed<10,5,TRN,WRAP,0>
+        result: fixed<14, 8, AP_TRN, AP_SAT>
+        weight: fixed<10,5,TRN,WRAP,0>
       ReuseFactor: 2
-      Trace: false
+      Trace: true
     q_conv1d_1_linear:
       Precision:
-        result: fixed<16,6>
-      Trace: false
+        result: auto
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: true
     q_conv1d_linear:
       Precision:
-        result: fixed<16,6>
-      Trace: false
+        result: auto
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: true
     q_dense:
       Precision:
-        bias: fixed<8,4>
-        result: fixed<16,6>
-        weight: fixed<8,4>
-      Trace: false
+        accum: fixed<14, 10, AP_TRN, AP_SAT>
+        bias: fixed<10,5,TRN,WRAP,0>
+        result: fixed<14, 8, AP_TRN, AP_SAT>
+        weight: fixed<10,5,TRN,WRAP,0>
+      ReuseFactor: 1
+      Trace: true
     q_dense_1:
       Precision:
-        bias: fixed<8,4>
-        result: fixed<16,6>
-        weight: fixed<8,4>
-      Trace: false
+        accum: fixed<14, 10, AP_TRN, AP_SAT>
+        bias: fixed<10,5,TRN,WRAP,0>
+        result: fixed<14, 8, AP_TRN, AP_SAT>
+        weight: fixed<10,5,TRN,WRAP,0>
+      ReuseFactor: 1
+      Trace: true
     q_dense_1_linear:
       Precision:
-        result: fixed<16,6>
-      Trace: false
+        result: auto
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: true
     q_dense_linear:
       Precision:
-        result: fixed<16,6>
-      Trace: false
-    sigmoid:
-      Precision:
-        result: fixed<16,6>
-      Trace: false
+        result: auto
+        table: fixed<18,8,TRN,WRAP,0>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: true
+    q_input:
+      Precision: fixed<12,8, AP_TRN, AP_SAT>
+      ReuseFactor: 1
+      TableSize: 1024
+      Trace: true
   Model:
     BramFactor: 1000000000
-    Precision: fixed<16,6>
+    Precision:
+      default: fixed<14,8, AP_TRN, AP_SAT>
     ReuseFactor: 1
     Strategy: Latency
     TraceOutput: false
 IOType: io_parallel
 InputData: null
-KerasModel: !keras_model 'qkmodel_1/hls4ml_prj/keras_model.h5'
-OutputDir: qkmodel_1/hls4ml_prj
+InputShapes:
+  input_1:
+  - 10
+  - 14
+KerasModel: !keras_model 'qkmodel/hls4ml_prj/keras_model.keras'
+OutputDir: qkmodel/hls4ml_prj
 OutputPredictions: null
+OutputShapes:
+  layer13_out:
+  - 1
 Part: xcvu13p-flga2577-2-e
 ProjectName: myproject
-Stamp: AECAd5Cc
+Stamp: d282d1e7
 Version: 1.0.0
+WriterConfig:
+  Namespace: null
+  TBOutputStream: both
+  WriteTar: false
+  WriteWeightsTxt: true
