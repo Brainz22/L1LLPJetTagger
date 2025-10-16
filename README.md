@@ -7,8 +7,6 @@ Compilation of files relating to the L1 LLP Jet Tagger.
 
 * `qkerasModel.py` has the qkeras model.
 
-* `qkROC.py` is the file used to produce `ROCCurveQK.png`.
+* `HLS_qk_Roc_Tracing.py` is the file used to produce `hls_Qk_ROCCurve.png` and the `LayerTraces` folder, where tracing results and a model graph is saved. 
 
-* `HLS_Qk_Roc.py` is the file used to produce `hls_Qk_ROCCurve.png`, which shows a comparison of ROC curves between the qkeras model and its hls conversion. 
-
-* `qkL1JetTagModel_hls_config.ipynb` is the file used to convert the model saved in `qkL1JetTagModel.h5` to HLS. This jupyter notebooks shows all of the configurations used, i.e reuse factor, precision, etc...
+* `qkL1JetTagModel_hls_config.ipynb` is the file used to convert the model saved in `<text>_qkL1JetTagModel.h5` to HLS. This jupyter notebooks shows all of the configurations used, i.e reuse factor, precision, etc...
