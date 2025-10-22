@@ -7,12 +7,16 @@
 
 #include "defines.h"
 
+namespace hls4ml_model_emu_v3 {
 
 // Prototype of top level function for C-synthesis
 void myproject(
-    input_t input_1[N_INPUT_1_1*N_INPUT_2_1],
-    result_t layer13_out[N_LAYER_13]
+    input_t input_1[10*14],
+    result_t layer13_out[1]
 );
 
+// hls-fpga-machine-learning insert emulator-defines
+
+}
 
 #endif

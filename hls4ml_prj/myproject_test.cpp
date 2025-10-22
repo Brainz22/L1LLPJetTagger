@@ -21,6 +21,7 @@ size_t trace_type_size = sizeof(double);
 } // namespace nnet
 
 int main(int argc, char **argv) {
+    using namespace hls4ml_model_emu_v3;
 
     // load input data from text file
     std::ifstream fin("tb_data/tb_input_features.dat");
@@ -59,9 +60,9 @@ int main(int argc, char **argv) {
             }
 
             // hls-fpga-machine-learning insert data
-      input_t input_1[N_INPUT_1_1*N_INPUT_2_1];
-      nnet::copy_data<float, input_t, 0, N_INPUT_1_1*N_INPUT_2_1>(in, input_1);
-      result_t layer13_out[N_LAYER_13];
+      input_t input_1[10*14];
+      nnet::copy_data<float, input_t, 0, 10*14>(in, input_1);
+      result_t layer13_out[1];
 
             // hls-fpga-machine-learning insert top-level-function
             myproject(input_1,layer13_out);
@@ -69,18 +70,18 @@ int main(int argc, char **argv) {
             if (e % CHECKPOINT == 0) {
                 std::cout << "Predictions" << std::endl;
                 // hls-fpga-machine-learning insert predictions
-                for(int i = 0; i < N_LAYER_13; i++) {
+                for(int i = 0; i < 1; i++) {
                   std::cout << pr[i] << " ";
                 }
                 std::cout << std::endl;
                 std::cout << "Quantized predictions" << std::endl;
                 // hls-fpga-machine-learning insert quantized
-                nnet::print_result<result_t, N_LAYER_13>(layer13_out, std::cout, true);
+                nnet::print_result<result_t, 1>(layer13_out, std::cout, true);
             }
             e++;
 
             // hls-fpga-machine-learning insert tb-output
-            nnet::print_result<result_t, N_LAYER_13>(layer13_out, fout);
+            nnet::print_result<result_t, 1>(layer13_out, fout);
         }
         fin.close();
         fpr.close();
@@ -89,18 +90,18 @@ int main(int argc, char **argv) {
         const unsigned NUM_TEST_SAMPLES = 5;
         for (unsigned i = 0; i < NUM_TEST_SAMPLES; i++) {
             // hls-fpga-machine-learning insert zero
-            input_t input_1[N_INPUT_1_1*N_INPUT_2_1];
-            nnet::fill_zero<input_t, N_INPUT_1_1*N_INPUT_2_1>(input_1);
-            result_t layer13_out[N_LAYER_13];
+            input_t input_1[10*14];
+            nnet::fill_zero<input_t, 10*14>(input_1);
+            result_t layer13_out[1];
 
             // hls-fpga-machine-learning insert top-level-function
             myproject(input_1,layer13_out);
 
             // hls-fpga-machine-learning insert output
-            nnet::print_result<result_t, N_LAYER_13>(layer13_out, std::cout, true);
+            nnet::print_result<result_t, 1>(layer13_out, std::cout, true);
 
             // hls-fpga-machine-learning insert tb-output
-            nnet::print_result<result_t, N_LAYER_13>(layer13_out, fout);
+            nnet::print_result<result_t, 1>(layer13_out, fout);
         }
     }
 

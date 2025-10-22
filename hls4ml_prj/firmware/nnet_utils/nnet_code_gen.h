@@ -9,7 +9,7 @@
 #include "nnet_function_stubs.h"
 #include "nnet_mult.h"
 
-namespace nnet {
+namespace hls4ml_model_emu_v3 {
 
 template <class data_T, class res_T, typename CONFIG_T> class PointwiseConv1D {
   public:
@@ -73,7 +73,7 @@ class fill_buffer_15 : public nnet::FillConv1DBuffer<data_T, CONFIG_T> {
     }
 };
 template<class data_T, class res_T, typename CONFIG_T>
-class pointwise_conv_15 : public Conv1DKernel<data_T, res_T, CONFIG_T> {
+class pointwise_conv_15 : public nnet::Conv1DKernel<data_T, res_T, CONFIG_T> {
   public:
     static void conv(
                      data_T data[CONFIG_T::in_width * CONFIG_T::n_chan],
@@ -95,8 +95,8 @@ class pointwise_conv_15 : public Conv1DKernel<data_T, res_T, CONFIG_T> {
             }
         }
 
-        pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[0], res_tmp[0], weights, biases);
-        pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[1], res_tmp[1], weights, biases);
+        nnet::pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[0], res_tmp[0], weights, biases);
+        nnet::pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[1], res_tmp[1], weights, biases);
 
     RFOutputLoop:
         for (int jj = 0; jj < CONFIG_T::reuse_factor; jj++) {
@@ -160,7 +160,7 @@ class fill_buffer_16 : public nnet::FillConv1DBuffer<data_T, CONFIG_T> {
     }
 };
 template<class data_T, class res_T, typename CONFIG_T>
-class pointwise_conv_16 : public Conv1DKernel<data_T, res_T, CONFIG_T> {
+class pointwise_conv_16 : public nnet::Conv1DKernel<data_T, res_T, CONFIG_T> {
   public:
     static void conv(
                      data_T data[CONFIG_T::in_width * CONFIG_T::n_chan],
@@ -182,8 +182,8 @@ class pointwise_conv_16 : public Conv1DKernel<data_T, res_T, CONFIG_T> {
             }
         }
 
-        pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[0], res_tmp[0], weights, biases);
-        pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[1], res_tmp[1], weights, biases);
+        nnet::pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[0], res_tmp[0], weights, biases);
+        nnet::pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[1], res_tmp[1], weights, biases);
 
     RFOutputLoop:
         for (int jj = 0; jj < CONFIG_T::reuse_factor; jj++) {
@@ -197,6 +197,6 @@ class pointwise_conv_16 : public Conv1DKernel<data_T, res_T, CONFIG_T> {
     }
 };
 
-} // namespace nnet
+} // namespace hls4ml_model_emu_v3
 
 #endif

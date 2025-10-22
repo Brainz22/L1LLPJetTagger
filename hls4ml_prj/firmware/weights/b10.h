@@ -6,11 +6,11 @@
 #ifndef B10_H_
 #define B10_H_
 
-#ifndef __SYNTHESIS__
-bias10_t b10[10];
-#else
+namespace hls4ml_model_emu_v3 {
+
 bias10_t b10[10] = {0.00000, 0.00000, 0.00000, 0.00000, -0.12500, 0.00000, 0.00000, 0.00000, 0.40625, 0.00000};
 
-#endif
+}
+
 
 #endif

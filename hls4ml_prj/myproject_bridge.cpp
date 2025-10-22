@@ -25,15 +25,6 @@ void allocate_trace_storage(size_t element_size) {
     nnet::trace_enabled = true;
     nnet::trace_outputs = new std::map<std::string, void *>;
     nnet::trace_type_size = element_size;
-    nnet::trace_outputs->insert(std::pair<std::string, void *>("q_input", (void *) malloc(N_INPUT_1_1*N_INPUT_2_1 * element_size)));
-    nnet::trace_outputs->insert(std::pair<std::string, void *>("q_conv1d", (void *) malloc(N_OUTPUTS_3*N_FILT_3 * element_size)));
-    nnet::trace_outputs->insert(std::pair<std::string, void *>("q_activation", (void *) malloc(N_OUTPUTS_3*N_FILT_3 * element_size)));
-    nnet::trace_outputs->insert(std::pair<std::string, void *>("q_conv1d_1", (void *) malloc(N_OUTPUTS_6*N_FILT_6 * element_size)));
-    nnet::trace_outputs->insert(std::pair<std::string, void *>("q_activation_1", (void *) malloc(N_OUTPUTS_6*N_FILT_6 * element_size)));
-    nnet::trace_outputs->insert(std::pair<std::string, void *>("global_average_pooling1d", (void *) malloc(N_FILT_9 * element_size)));
-    nnet::trace_outputs->insert(std::pair<std::string, void *>("q_dense", (void *) malloc(N_LAYER_10 * element_size)));
-    nnet::trace_outputs->insert(std::pair<std::string, void *>("q_activation_2", (void *) malloc(N_LAYER_10 * element_size)));
-    nnet::trace_outputs->insert(std::pair<std::string, void *>("q_dense_1", (void *) malloc(N_LAYER_13 * element_size)));
 }
 
 void free_trace_storage() {
@@ -56,35 +47,39 @@ void collect_trace_output(struct trace_data *c_trace_outputs) {
     }
 }
 
+// hls-fpga-machine-learning insert tb_input_writer
+
 // Wrapper of top level function for Python bridge
 void myproject_float(
-    float input_1[N_INPUT_1_1*N_INPUT_2_1],
-    float layer13_out[N_LAYER_13]
+    float *input_1,
+    float *layer13_out
 ) {
+    using namespace hls4ml_model_emu_v3;
 
-    input_t input_1_ap[N_INPUT_1_1*N_INPUT_2_1];
-    nnet::convert_data<float, input_t, N_INPUT_1_1*N_INPUT_2_1>(input_1, input_1_ap);
+    input_t input_1_ap[10*14];
+    nnet::convert_data<float, input_t, 10*14>(input_1, input_1_ap);
 
-    result_t layer13_out_ap[N_LAYER_13];
+    result_t layer13_out_ap[1];
 
     myproject(input_1_ap,layer13_out_ap);
 
-    nnet::convert_data<result_t, float, N_LAYER_13>(layer13_out_ap, layer13_out);
+    nnet::convert_data<result_t, float, 1>(layer13_out_ap, layer13_out);
 }
 
 void myproject_double(
-    double input_1[N_INPUT_1_1*N_INPUT_2_1],
-    double layer13_out[N_LAYER_13]
+    double *input_1,
+    double *layer13_out
 ) {
+    using namespace hls4ml_model_emu_v3;
 
-    input_t input_1_ap[N_INPUT_1_1*N_INPUT_2_1];
-    nnet::convert_data<double, input_t, N_INPUT_1_1*N_INPUT_2_1>(input_1, input_1_ap);
+    input_t input_1_ap[10*14];
+    nnet::convert_data<double, input_t, 10*14>(input_1, input_1_ap);
 
-    result_t layer13_out_ap[N_LAYER_13];
+    result_t layer13_out_ap[1];
 
     myproject(input_1_ap,layer13_out_ap);
 
-    nnet::convert_data<result_t, double, N_LAYER_13>(layer13_out_ap, layer13_out);
+    nnet::convert_data<result_t, double, 1>(layer13_out_ap, layer13_out);
 }
 }
 

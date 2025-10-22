@@ -6,11 +6,11 @@
 #ifndef W13_H_
 #define W13_H_
 
-#ifndef __SYNTHESIS__
-weight13_t w13[10];
-#else
+namespace hls4ml_model_emu_v3 {
+
 weight13_t w13[10] = {0.00000, 0.00000, 0.00000, 0.00000, -1.25000, 0.00000, 0.00000, 0.00000, 1.15625, 0.00000};
 
-#endif
+}
+
 
 #endif

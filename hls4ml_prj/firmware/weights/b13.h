@@ -6,11 +6,11 @@
 #ifndef B13_H_
 #define B13_H_
 
-#ifndef __SYNTHESIS__
-bias13_t b13[1];
-#else
+namespace hls4ml_model_emu_v3 {
+
 bias13_t b13[1] = {0.31250};
 
-#endif
+}
+
 
 #endif

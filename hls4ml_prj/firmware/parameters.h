@@ -27,17 +27,9 @@
 #include "weights/w13.h"
 #include "weights/b13.h"
 
+namespace hls4ml_model_emu_v3 {
 
 // hls-fpga-machine-learning insert layer-config
-// q_input
-struct linear_config2 : nnet::activ_config {
-    static const unsigned n_in = 140;
-    static const unsigned table_size = 1024;
-    static const unsigned io_type = nnet::io_parallel;
-    static const unsigned reuse_factor = 1;
-    typedef q_input_table_t table_t;
-};
-
 // q_conv1d
 struct config15_mult : nnet::dense_config {
     static const unsigned n_in = 70;
@@ -78,7 +70,7 @@ struct config15 : nnet::conv1d_config {
     static const unsigned n_partitions = 10;
     static const unsigned n_pixels = out_width / n_partitions;
     template<class data_T, class CONFIG_T>
-    using fill_buffer = nnet::fill_buffer_15<data_T, CONFIG_T>;
+    using fill_buffer = hls4ml_model_emu_v3::fill_buffer_15<data_T, CONFIG_T>;
     typedef q_conv1d_accum_t accum_t;
     typedef bias3_t bias_t;
     typedef weight3_t weight_t;
@@ -86,7 +78,7 @@ struct config15 : nnet::conv1d_config {
     template<unsigned K, unsigned S, unsigned W>
     using scale_index = nnet::scale_index_regular<K, S, W>;
     template<class data_T, class res_T, class CONFIG_T>
-    using conv_kernel = nnet::pointwise_conv_15<data_T, res_T, CONFIG_T>;
+    using conv_kernel = hls4ml_model_emu_v3::pointwise_conv_15<data_T, res_T, CONFIG_T>;
 };
 const ap_uint<config15::filt_width> config15::pixels[] = {0};
 
@@ -139,7 +131,7 @@ struct config16 : nnet::conv1d_config {
     static const unsigned n_partitions = 10;
     static const unsigned n_pixels = out_width / n_partitions;
     template<class data_T, class CONFIG_T>
-    using fill_buffer = nnet::fill_buffer_16<data_T, CONFIG_T>;
+    using fill_buffer = hls4ml_model_emu_v3::fill_buffer_16<data_T, CONFIG_T>;
     typedef q_conv1d_1_accum_t accum_t;
     typedef bias6_t bias_t;
     typedef weight6_t weight_t;
@@ -147,9 +139,18 @@ struct config16 : nnet::conv1d_config {
     template<unsigned K, unsigned S, unsigned W>
     using scale_index = nnet::scale_index_regular<K, S, W>;
     template<class data_T, class res_T, class CONFIG_T>
-    using conv_kernel = nnet::pointwise_conv_16<data_T, res_T, CONFIG_T>;
+    using conv_kernel = hls4ml_model_emu_v3::pointwise_conv_16<data_T, res_T, CONFIG_T>;
 };
 const ap_uint<config16::filt_width> config16::pixels[] = {0};
+
+// q_conv1d_1_linear
+struct linear_config7 : nnet::activ_config {
+    static const unsigned n_in = 100;
+    static const unsigned table_size = 1024;
+    static const unsigned io_type = nnet::io_parallel;
+    static const unsigned reuse_factor = 1;
+    typedef q_conv1d_1_linear_table_t table_t;
+};
 
 // q_activation_1
 struct relu_config8 : nnet::activ_config {
@@ -221,5 +222,6 @@ struct config13 : nnet::dense_config {
 };
 
 
+}
 
 #endif
