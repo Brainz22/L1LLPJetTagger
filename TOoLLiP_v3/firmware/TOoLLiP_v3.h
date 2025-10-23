@@ -1,5 +1,5 @@
-#ifndef MYPROJECT_H_
-#define MYPROJECT_H_
+#ifndef TOOLLIP_V3_H_
+#define TOOLLIP_V3_H_
 
 #include "ap_fixed.h"
 #include "ap_int.h"
@@ -10,7 +10,7 @@
 namespace hls4ml_model_emu_v3 {
 
 // Prototype of top level function for C-synthesis
-void myproject(
+void TOoLLiP_v3(
     input_t input_1[10*14],
     result_t layer13_out[1]
 );

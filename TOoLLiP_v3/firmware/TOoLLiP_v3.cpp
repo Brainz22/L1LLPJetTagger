@@ -1,11 +1,11 @@
 #include <iostream>
 
-#include "myproject.h"
+#include "TOoLLiP_v3.h"
 #include "parameters.h"
 
 namespace hls4ml_model_emu_v3 {
 
-void myproject(
+void TOoLLiP_v3(
     input_t input_1[10*14],
     result_t layer13_out[1]
 ) {
@@ -33,9 +33,6 @@ void myproject(
     layer6_t layer6_out[10*10];
     #pragma HLS ARRAY_PARTITION variable=layer6_out complete dim=0
 
-    layer7_t layer7_out[10*10];
-    #pragma HLS ARRAY_PARTITION variable=layer7_out complete dim=0
-
     layer8_t layer8_out[10*10];
     #pragma HLS ARRAY_PARTITION variable=layer8_out complete dim=0
 
@@ -54,9 +51,7 @@ void myproject(
 
     nnet::pointwise_conv_1d_cl<layer5_t, layer6_t, config16>(layer5_out, layer6_out, w6, b6); // q_conv1d_1
 
-    nnet::linear<layer6_t, layer7_t, linear_config7>(layer6_out, layer7_out); // q_conv1d_1_linear
-
-    nnet::relu<layer7_t, layer8_t, relu_config8>(layer7_out, layer8_out); // q_activation_1
+    nnet::relu<layer6_t, layer8_t, relu_config8>(layer6_out, layer8_out); // q_activation_1
 
     nnet::global_pooling1d_cl<layer8_t, layer9_t, config9>(layer8_out, layer9_out); // global_average_pooling1d
 

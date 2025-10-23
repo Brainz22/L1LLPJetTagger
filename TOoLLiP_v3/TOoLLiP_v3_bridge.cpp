@@ -1,7 +1,7 @@
-#ifndef MYPROJECT_BRIDGE_H_
-#define MYPROJECT_BRIDGE_H_
+#ifndef TOOLLIP_V3_BRIDGE_H_
+#define TOOLLIP_V3_BRIDGE_H_
 
-#include "firmware/myproject.h"
+#include "firmware/TOoLLiP_v3.h"
 #include "firmware/nnet_utils/nnet_helpers.h"
 #include <algorithm>
 #include <map>
@@ -50,7 +50,7 @@ void collect_trace_output(struct trace_data *c_trace_outputs) {
 // hls-fpga-machine-learning insert tb_input_writer
 
 // Wrapper of top level function for Python bridge
-void myproject_float(
+void TOoLLiP_v3_float(
     float *input_1,
     float *layer13_out
 ) {
@@ -61,12 +61,12 @@ void myproject_float(
 
     result_t layer13_out_ap[1];
 
-    myproject(input_1_ap,layer13_out_ap);
+    TOoLLiP_v3(input_1_ap,layer13_out_ap);
 
     nnet::convert_data<result_t, float, 1>(layer13_out_ap, layer13_out);
 }
 
-void myproject_double(
+void TOoLLiP_v3_double(
     double *input_1,
     double *layer13_out
 ) {
@@ -77,7 +77,7 @@ void myproject_double(
 
     result_t layer13_out_ap[1];
 
-    myproject(input_1_ap,layer13_out_ap);
+    TOoLLiP_v3(input_1_ap,layer13_out_ap);
 
     nnet::convert_data<result_t, double, 1>(layer13_out_ap, layer13_out);
 }

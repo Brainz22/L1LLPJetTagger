@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <vector>
 
-#include "firmware/myproject.h"
+#include "firmware/TOoLLiP_v3.h"
 #include "firmware/nnet_utils/nnet_helpers.h"
 
 // hls-fpga-machine-learning insert bram
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
       result_t layer13_out[1];
 
             // hls-fpga-machine-learning insert top-level-function
-            myproject(input_1,layer13_out);
+            TOoLLiP_v3(input_1,layer13_out);
 
             if (e % CHECKPOINT == 0) {
                 std::cout << "Predictions" << std::endl;
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
             result_t layer13_out[1];
 
             // hls-fpga-machine-learning insert top-level-function
-            myproject(input_1,layer13_out);
+            TOoLLiP_v3(input_1,layer13_out);
 
             // hls-fpga-machine-learning insert output
             nnet::print_result<result_t, 1>(layer13_out, std::cout, true);

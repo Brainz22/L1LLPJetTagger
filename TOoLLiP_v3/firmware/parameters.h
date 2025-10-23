@@ -32,9 +32,9 @@ namespace hls4ml_model_emu_v3 {
 // hls-fpga-machine-learning insert layer-config
 // q_conv1d
 struct config15_mult : nnet::dense_config {
-    static const unsigned n_in = 70;
-    static const unsigned n_out = 50;
-    static const unsigned reuse_factor = 2;
+    static const unsigned n_in = 140;
+    static const unsigned n_out = 100;
+    static const unsigned reuse_factor = 1;
     static const unsigned strategy = nnet::latency;
     static const unsigned n_zeros = 107;
     static const unsigned multiplier_limit = DIV_ROUNDUP(n_in * n_out, reuse_factor) - n_zeros / reuse_factor;
@@ -58,7 +58,7 @@ struct config15 : nnet::conv1d_config {
     static const unsigned stride_width = 1;
     static const unsigned dilation = 1;
     static const unsigned out_width = 10;
-    static const unsigned reuse_factor = 2;
+    static const unsigned reuse_factor = 1;
     static const unsigned n_zeros = 107;
     static const unsigned multiplier_limit =
         DIV_ROUNDUP(kernel_size * n_chan * n_filt, reuse_factor) - n_zeros / reuse_factor;
@@ -93,9 +93,9 @@ struct relu_config5 : nnet::activ_config {
 
 // q_conv1d_1
 struct config16_mult : nnet::dense_config {
-    static const unsigned n_in = 50;
-    static const unsigned n_out = 50;
-    static const unsigned reuse_factor = 2;
+    static const unsigned n_in = 100;
+    static const unsigned n_out = 100;
+    static const unsigned reuse_factor = 1;
     static const unsigned strategy = nnet::latency;
     static const unsigned n_zeros = 75;
     static const unsigned multiplier_limit = DIV_ROUNDUP(n_in * n_out, reuse_factor) - n_zeros / reuse_factor;
@@ -119,7 +119,7 @@ struct config16 : nnet::conv1d_config {
     static const unsigned stride_width = 1;
     static const unsigned dilation = 1;
     static const unsigned out_width = 10;
-    static const unsigned reuse_factor = 2;
+    static const unsigned reuse_factor = 1;
     static const unsigned n_zeros = 75;
     static const unsigned multiplier_limit =
         DIV_ROUNDUP(kernel_size * n_chan * n_filt, reuse_factor) - n_zeros / reuse_factor;
@@ -142,15 +142,6 @@ struct config16 : nnet::conv1d_config {
     using conv_kernel = hls4ml_model_emu_v3::pointwise_conv_16<data_T, res_T, CONFIG_T>;
 };
 const ap_uint<config16::filt_width> config16::pixels[] = {0};
-
-// q_conv1d_1_linear
-struct linear_config7 : nnet::activ_config {
-    static const unsigned n_in = 100;
-    static const unsigned table_size = 1024;
-    static const unsigned io_type = nnet::io_parallel;
-    static const unsigned reuse_factor = 1;
-    typedef q_conv1d_1_linear_table_t table_t;
-};
 
 // q_activation_1
 struct relu_config8 : nnet::activ_config {

@@ -96,7 +96,6 @@ class pointwise_conv_15 : public nnet::Conv1DKernel<data_T, res_T, CONFIG_T> {
         }
 
         nnet::pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[0], res_tmp[0], weights, biases);
-        nnet::pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[1], res_tmp[1], weights, biases);
 
     RFOutputLoop:
         for (int jj = 0; jj < CONFIG_T::reuse_factor; jj++) {
@@ -183,7 +182,6 @@ class pointwise_conv_16 : public nnet::Conv1DKernel<data_T, res_T, CONFIG_T> {
         }
 
         nnet::pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[0], res_tmp[0], weights, biases);
-        nnet::pointwise_conv_1d_latency_cl<data_T, res_T, CONFIG_T>(data_tmp[1], res_tmp[1], weights, biases);
 
     RFOutputLoop:
         for (int jj = 0; jj < CONFIG_T::reuse_factor; jj++) {
