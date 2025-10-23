@@ -8,7 +8,7 @@ ls -1 "$VIVADO_DIR"
 
 # Ask user to choose a version
 #read -p "Enter Vivado version: " VERSION
-VERSION="2021.2"
+VERSION="2020.1"
 # Check if folder exists
 if [ ! -d "$VIVADO_DIR/$VERSION" ]; then
     echo "Error: Version $VERSION not found in $VIVADO_DIR"
@@ -29,9 +29,9 @@ fi
 echo "Sourcing $SETTINGS"
 source "$SETTINGS"
 
-# Try running vitis_hls first, fallback to vivado_hls
+# Try running vivado_hls first, fall back to vitis_hls if it does not work
 if command -v vivado_hls &> /dev/null; then
-    cd qkmodel/hls4ml_prj/
+    cd qkmodel/TOoLLiP_v3/
     echo
     echo "1) Launching vivado_hls from directory $PWD"
     echo
@@ -39,7 +39,7 @@ if command -v vivado_hls &> /dev/null; then
     vivado_hls -f build_prj.tcl
 
 elif command -v vitis_hls &> /dev/null; then
-    cd qkmodel/hls4ml_prj/
+    cd qkmodel/TOoLLiP_v3/
     echo
     echo " \n 2) Launching vitis_hls from directory $PWD \n"
     echo
