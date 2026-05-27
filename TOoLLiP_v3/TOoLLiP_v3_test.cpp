@@ -60,8 +60,8 @@ int main(int argc, char **argv) {
             }
 
             // hls-fpga-machine-learning insert data
-      input_t input_1[10*14];
-      nnet::copy_data<float, input_t, 0, 10*14>(in, input_1);
+      input_t input_1[10*13];
+      nnet::copy_data<float, input_t, 0, 10*13>(in, input_1);
       result_t layer13_out[1];
 
             // hls-fpga-machine-learning insert top-level-function
@@ -90,8 +90,8 @@ int main(int argc, char **argv) {
         const unsigned NUM_TEST_SAMPLES = 5;
         for (unsigned i = 0; i < NUM_TEST_SAMPLES; i++) {
             // hls-fpga-machine-learning insert zero
-            input_t input_1[10*14];
-            nnet::fill_zero<input_t, 10*14>(input_1);
+            input_t input_1[10*13];
+            nnet::fill_zero<input_t, 10*13>(input_1);
             result_t layer13_out[1];
 
             // hls-fpga-machine-learning insert top-level-function

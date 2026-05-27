@@ -19,6 +19,11 @@ BACKEND = "Vitis"
 
 model = load_qmodel("noNorm_train_qkL1JetTagModel.h5")
 
+model.compile(loss=tensorflow.keras.losses.BinaryCrossentropy(from_logits=True, name="binary_crossentropy"), 
+                optimizer="adam", 
+                metrics=["binary_accuracy"],
+                weighted_metrics=[tensorflow.keras.metrics.AUC(name="auc")])
+
 #Convert model to HLS
 import hls4ml
 config = hls4ml.utils.config_from_keras_model(model, 
@@ -32,24 +37,19 @@ print(config)
 print("\n")
 print("---------------------------------")
 
-config['LayerName']['q_conv1d']['ReuseFactor'] = 2
-config['LayerName']['q_conv1d_1']['ReuseFactor'] = 2
-
-
-
 
 config["LayerName"]["input_1"]["Precision"] = "fixed<12,6,AP_TRN, AP_SAT>"
 
-config["LayerName"]["q_input"]["Precision"] = "fixed<12,8, AP_TRN, AP_SAT>"
+config["LayerName"]["q_input"]["Precision"] = "fixed<12,6, AP_TRN, AP_SAT>"
 
-
+config['LayerName']['q_conv1d']['ReuseFactor'] = 1
 config['LayerName']['q_conv1d']["Precision"]["accum"] = "fixed<14,8, AP_TRN, AP_SAT>"
 config['LayerName']['q_conv1d']["Precision"]["result"] = "fixed<14,8, AP_TRN, AP_SAT>"
 
 
 config["LayerName"]["q_activation"]["Precision"]["result"] = "ufixed<14,8, AP_TRN, AP_SAT>"
 
-
+config['LayerName']['q_conv1d_1']['ReuseFactor'] = 1
 config['LayerName']['q_conv1d_1']["Precision"]["accum"] = "fixed<16, 12, AP_TRN, AP_SAT>"
 config['LayerName']['q_conv1d_1']["Precision"]["result"] = "fixed<14, 8, AP_TRN, AP_SAT>"
 
@@ -83,7 +83,7 @@ hls_model = hls4ml.converters.convert_from_keras_model(model,
                                                        part='xcvu13p-flga2577-2-e',)
                                                        #bit_exact=True)
 
-hls4ml.utils.plot_model(hls_model, show_shapes=True, show_precision=True, to_file=os.getcwd() + "/LayerTraces/qkmodel.png")
+hls4ml.utils.plot_model(hls_model, show_shapes=True, show_precision=True, to_file=os.getcwd() + "qkmodel.png")
 
 #Compile model, no need to convert if we are plotting performance
 hls_model.compile()
@@ -91,15 +91,15 @@ hls_model.compile()
 # Handle Data: 
 #with h5py.File("/home/users/russelld/L1JetTagDaniel/hls4mlModifications/10-08-23/02-02_datasets/4b/M_LLP_30_ctau_10/newTestDatapt20_vDter_Signal_Only.h5", "r") as hf:
 #with h5py.File("/home/users/russelld/L1JetTagDaniel/hls4mlModifications/10-08-23/02-02_Scripts/newTestDataST30.h5", "r") as hf:
-with h5py.File("/home/users/russelld/L1JetTagDaniel/hls4mlModifications/10-08-23/02-02_datasets/4b/M_LLP_30_ctau_10/newTestDatapt20_vDter_Signal_Only.h5", "r") as hf:
-    dataset = hf["Testing Data"][:]
+with h5py.File("/home/users/russelld/TOOLLIP_TESTS/cmssw-tests/clean_SCRAM/CMSSW_15_1_0_pre4/src/L1LLPJetTag/data/test_merged/phi15_uuuu_merged_testPart.h5", "r") as hf:
+    dataset = hf["jet_constituents"][:]
 dataset = dataset[:, 0:141]
-with h5py.File("/home/users/russelld/L1JetTagDaniel/backgroundQCD/testingDatapt30QCD.h5", "r") as hf:
-    datasetQCD = hf["Testing Data"][:]
-with h5py.File("/home/users/russelld/L1JetTagDaniel/hls4mlModifications/10-08-23/02-02_datasets/4b/M_LLP_30_ctau_10/newJetDatapt20_vDter_Signal_Only.h5", "r") as hf:
-    jetDataSig = hf["Jet Data"][:]
-with h5py.File("/home/users/russelld/L1JetTagDaniel/backgroundQCD/jetDatapt30QCD.h5", "r") as hf:
-    jetDataQCD = hf["Jet Data"][:]
+with h5py.File("/home/users/russelld/TOOLLIP_TESTS/cmssw-tests/clean_SCRAM/CMSSW_15_1_0_pre4/src/L1LLPJetTag/data/QCD_Pt15To3000_Flat_PU200/Bkg_test.h5", "r") as hf:
+    datasetQCD = hf["jet_constituents"][:]
+with h5py.File("/home/users/russelld/TOOLLIP_TESTS/cmssw-tests/clean_SCRAM/CMSSW_15_1_0_pre4/src/L1LLPJetTag/data/test_merged/phi15_uuuu_merged_testJet.h5", "r") as hf:
+    jetDataSig = hf["test_jet_data"][:]
+with h5py.File("/home/users/russelld/TOOLLIP_TESTS/cmssw-tests/clean_SCRAM/CMSSW_15_1_0_pre4/src/L1LLPJetTag/data/QCD_Pt15To3000_Flat_PU200/Bkg_testJets.h5", "r") as hf:
+    jetDataQCD = hf["test_jet_data"][:]
     
 dataset = np.concatenate((dataset,datasetQCD)) #Stacking datasets on top of another
 jetData = np.concatenate((jetDataSig,jetDataQCD))
@@ -134,12 +134,29 @@ else:
     tag = "noNorm/noNorm_test"
     kinematics(A, jetData, b, "stop_4b_4c", "noNorm/noNorm_test" )
 
-X_test = np.ascontiguousarray(A)
 
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 
 import matplotlib.pyplot as plt
+
+import importlib.util, sys
+
+spec = importlib.util.spec_from_file_location(
+    "inputFixer",
+    "/home/users/russelld/TOOLLIP_TESTS/cmssw-tests/clean_SCRAM/CMSSW_15_1_0_pre4/src/L1LLPJetTag/scripts/model/inputFixer.py"
+)
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+
+add_ip = mod.add_ip
+
+#prediction with both models
+A = add_ip(A)
+print("Testing inputs shape: ", A.shape)
+
+X_test = np.ascontiguousarray(A)
+
 
 Ab_pred_qkeras = model.predict(A).ravel()
 Ab_pred_hls_qkeras = hls_model.predict(X_test).ravel()

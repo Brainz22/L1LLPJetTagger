@@ -56,8 +56,8 @@ void TOoLLiP_v3_float(
 ) {
     using namespace hls4ml_model_emu_v3;
 
-    input_t input_1_ap[10*14];
-    nnet::convert_data<float, input_t, 10*14>(input_1, input_1_ap);
+    input_t input_1_ap[10*13];
+    nnet::convert_data<float, input_t, 10*13>(input_1, input_1_ap);
 
     result_t layer13_out_ap[1];
 
@@ -72,8 +72,8 @@ void TOoLLiP_v3_double(
 ) {
     using namespace hls4ml_model_emu_v3;
 
-    input_t input_1_ap[10*14];
-    nnet::convert_data<double, input_t, 10*14>(input_1, input_1_ap);
+    input_t input_1_ap[10*13];
+    nnet::convert_data<double, input_t, 10*13>(input_1, input_1_ap);
 
     result_t layer13_out_ap[1];
 

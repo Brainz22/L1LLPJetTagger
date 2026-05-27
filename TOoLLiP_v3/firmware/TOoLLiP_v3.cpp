@@ -6,7 +6,7 @@
 namespace hls4ml_model_emu_v3 {
 
 void TOoLLiP_v3(
-    input_t input_1[10*14],
+    input_t input_1[10*13],
     result_t layer13_out[1]
 ) {
 

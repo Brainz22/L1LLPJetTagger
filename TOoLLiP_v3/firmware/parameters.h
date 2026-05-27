@@ -32,11 +32,11 @@ namespace hls4ml_model_emu_v3 {
 // hls-fpga-machine-learning insert layer-config
 // q_conv1d
 struct config15_mult : nnet::dense_config {
-    static const unsigned n_in = 140;
+    static const unsigned n_in = 130;
     static const unsigned n_out = 100;
     static const unsigned reuse_factor = 1;
     static const unsigned strategy = nnet::latency;
-    static const unsigned n_zeros = 107;
+    static const unsigned n_zeros = 98;
     static const unsigned multiplier_limit = DIV_ROUNDUP(n_in * n_out, reuse_factor) - n_zeros / reuse_factor;
     typedef q_conv1d_accum_t accum_t;
     typedef bias3_t bias_t;
@@ -51,7 +51,7 @@ struct config15 : nnet::conv1d_config {
     static const unsigned pad_left = 0;
     static const unsigned pad_right = 0;
     static const unsigned in_width = 10;
-    static const unsigned n_chan = 14;
+    static const unsigned n_chan = 13;
     static const unsigned filt_width = 1;
     static const unsigned kernel_size = filt_width;
     static const unsigned n_filt = 10;
@@ -59,7 +59,7 @@ struct config15 : nnet::conv1d_config {
     static const unsigned dilation = 1;
     static const unsigned out_width = 10;
     static const unsigned reuse_factor = 1;
-    static const unsigned n_zeros = 107;
+    static const unsigned n_zeros = 98;
     static const unsigned multiplier_limit =
         DIV_ROUNDUP(kernel_size * n_chan * n_filt, reuse_factor) - n_zeros / reuse_factor;
     static const bool store_weights_in_bram = false;
@@ -168,8 +168,8 @@ struct config10 : nnet::dense_config {
     static const unsigned io_type = nnet::io_parallel;
     static const unsigned strategy = nnet::latency;
     static const unsigned reuse_factor = 1;
-    static const unsigned n_zeros = 90;
-    static const unsigned n_nonzeros = 10;
+    static const unsigned n_zeros = 91;
+    static const unsigned n_nonzeros = 9;
     static const unsigned multiplier_limit = DIV_ROUNDUP(n_in * n_out, reuse_factor) - n_zeros / reuse_factor;
     static const bool store_weights_in_bram = false;
     typedef q_dense_accum_t accum_t;

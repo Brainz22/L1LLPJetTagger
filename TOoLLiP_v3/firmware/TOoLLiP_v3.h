@@ -11,7 +11,7 @@ namespace hls4ml_model_emu_v3 {
 
 // Prototype of top level function for C-synthesis
 void TOoLLiP_v3(
-    input_t input_1[10*14],
+    input_t input_1[10*13],
     result_t layer13_out[1]
 );
 
