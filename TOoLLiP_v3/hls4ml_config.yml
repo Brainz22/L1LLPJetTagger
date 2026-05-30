@@ -5,7 +5,7 @@ HLSConfig:
   LayerName:
     global_average_pooling1d:
       Precision:
-        accum: fixed<16,12, AP_TRN, AP_SAT>
+        accum: fixed<16, 8, AP_TRN, AP_SAT>
         result: fixed<14,8, AP_TRN, AP_SAT>
       ReuseFactor: 1
       Trace: false
@@ -14,14 +14,14 @@ HLSConfig:
       Trace: false
     q_activation:
       Precision:
-        result: ufixed<14,8, AP_TRN, AP_SAT>
+        result: ufixed<14, 8, AP_TRN, AP_SAT>
         table: fixed<18,8,TRN,WRAP,0>
       ReuseFactor: 1
       TableSize: 1024
       Trace: false
     q_activation_1:
       Precision:
-        result: ufixed<10,5, AP_TRN, AP_SAT>
+        result: ufixed<14, 8, AP_TRN, AP_SAT>
         table: fixed<18,8,TRN,WRAP,0>
       ReuseFactor: 1
       TableSize: 1024
@@ -69,7 +69,7 @@ HLSConfig:
       Trace: false
     q_dense:
       Precision:
-        accum: fixed<14, 10, AP_TRN, AP_SAT>
+        accum: fixed<16, 8, AP_TRN, AP_SAT>
         bias: fixed<10,5,TRN,WRAP,0>
         result: fixed<14, 8, AP_TRN, AP_SAT>
         weight: fixed<10,5,TRN,WRAP,0>
@@ -77,7 +77,7 @@ HLSConfig:
       Trace: false
     q_dense_1:
       Precision:
-        accum: fixed<14, 10, AP_TRN, AP_SAT>
+        accum: fixed<16, 8, AP_TRN, AP_SAT>
         bias: fixed<10,5,TRN,WRAP,0>
         result: fixed<14, 8, AP_TRN, AP_SAT>
         weight: fixed<10,5,TRN,WRAP,0>
@@ -124,7 +124,7 @@ OutputShapes:
   - 1
 Part: xcvu13p-flga2577-2-e
 ProjectName: TOoLLiP_v3
-Stamp: 9bed37b1
+Stamp: e52a4cc2
 Version: 1.0.0
 WriterConfig:
   Namespace: hls4ml_model_emu_v3

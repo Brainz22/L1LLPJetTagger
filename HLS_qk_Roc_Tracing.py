@@ -17,7 +17,8 @@ from sklearn.preprocessing import MinMaxScaler
 os.environ['PATH'] = '/data/software/xilinx/Vitis_HLS/2023.2/bin/' + os.environ['PATH']
 BACKEND = "Vitis"
 
-model = load_qmodel("noNorm_train_qkL1JetTagModel.h5")
+#model = load_qmodel("noNorm_train_qkL1JetTagModel.h5")
+model = load_qmodel("noNorm_train_epochs_240_13qkL1JetTagModel_LossFromLogits.h5")
 
 model.compile(loss=tensorflow.keras.losses.BinaryCrossentropy(from_logits=True, name="binary_crossentropy"), 
                 optimizer="adam", 
@@ -37,6 +38,20 @@ print(config)
 print("\n")
 print("---------------------------------")
 
+#check qkeras quantizers
+if False:
+    for layer in model.layers:
+        print(layer.name, layer.get_config().get('quantizers', None) or layer.get_config().get('activation_quantizer', None))
+
+    # for layer in model.layers:
+    #     cfg = layer.get_config()
+    #     print(layer.name, {k: v for k, v in cfg.items() if 'quantizer' in k.lower() or 'precision' in k.lower()})
+
+    for layer in model.layers:
+        if 'activation' in layer.name:
+            print(layer.name, getattr(layer, 'quantizer', None))
+
+    sys.exit(0)
 
 config["LayerName"]["input_1"]["Precision"] = "fixed<12,6,AP_TRN, AP_SAT>"
 
@@ -46,36 +61,30 @@ config['LayerName']['q_conv1d']['ReuseFactor'] = 1
 config['LayerName']['q_conv1d']["Precision"]["accum"] = "fixed<14,8, AP_TRN, AP_SAT>"
 config['LayerName']['q_conv1d']["Precision"]["result"] = "fixed<14,8, AP_TRN, AP_SAT>"
 
-
-config["LayerName"]["q_activation"]["Precision"]["result"] = "ufixed<14,8, AP_TRN, AP_SAT>"
+config["LayerName"]["q_activation"]["Precision"]["result"] = "ufixed<14, 8, AP_TRN, AP_SAT>"
 
 config['LayerName']['q_conv1d_1']['ReuseFactor'] = 1
 config['LayerName']['q_conv1d_1']["Precision"]["accum"] = "fixed<16, 12, AP_TRN, AP_SAT>"
 config['LayerName']['q_conv1d_1']["Precision"]["result"] = "fixed<14, 8, AP_TRN, AP_SAT>"
 
-config["LayerName"]["q_activation_1"]["Precision"]["result"] = "ufixed<10,5, AP_TRN, AP_SAT>"
+config["LayerName"]["q_activation_1"]["Precision"]["result"] = "ufixed<14, 8, AP_TRN, AP_SAT>"
 
-
-config["LayerName"]["global_average_pooling1d"]["Precision"]["accum"] = "fixed<16,12, AP_TRN, AP_SAT>"
+config["LayerName"]["global_average_pooling1d"]["Precision"]["accum"] = "fixed<16, 8, AP_TRN, AP_SAT>"
 config["LayerName"]["global_average_pooling1d"]["Precision"]["result"] = "fixed<14,8, AP_TRN, AP_SAT>"
 
-
-config['LayerName']['q_dense']["Precision"]["accum"] = "fixed<14, 10, AP_TRN, AP_SAT>"
+config['LayerName']['q_dense']["Precision"]["accum"] = "fixed<16, 8, AP_TRN, AP_SAT>"
 config['LayerName']['q_dense']["Precision"]["result"] = "fixed<14, 8, AP_TRN, AP_SAT>"
-
-
 
 config["LayerName"]["q_activation_2"]["Precision"]["result"] = "ufixed<14, 8, AP_TRN, AP_SAT>"
 
-
-config['LayerName']['q_dense_1']["Precision"]["accum"] = "fixed<14, 10, AP_TRN, AP_SAT>"
+config['LayerName']['q_dense_1']["Precision"]["accum"] = "fixed<16, 8, AP_TRN, AP_SAT>"
 config['LayerName']['q_dense_1']["Precision"]["result"] = "fixed<14, 8, AP_TRN, AP_SAT>"
 
 
 #For Tracing
 for layer in config['LayerName'].keys():
     print('Enable tracing for layer:', layer)
-    config['LayerName'][layer]['Trace'] = True
+    config['LayerName'][layer]['Trace'] = False
 
 hls_model = hls4ml.converters.convert_from_keras_model(model,
                                                        hls_config=config,
@@ -83,7 +92,7 @@ hls_model = hls4ml.converters.convert_from_keras_model(model,
                                                        part='xcvu13p-flga2577-2-e',)
                                                        #bit_exact=True)
 
-hls4ml.utils.plot_model(hls_model, show_shapes=True, show_precision=True, to_file=os.getcwd() + "qkmodel.png")
+hls4ml.utils.plot_model(hls_model, show_shapes=True, show_precision=True, to_file=os.getcwd() + "/LayerTraces/qkmodel.png")
 
 #Compile model, no need to convert if we are plotting performance
 hls_model.compile()
@@ -194,7 +203,13 @@ import hls4ml.model.profiling
 y_hls, hls4ml_trace = hls_model.trace(X_test)
 keras_trace = hls4ml.model.profiling.get_ymodel_keras(model, X_test)
 
+print("===========================================")
+print("Tracing now...")
+print("===========================================")
 for LAYER in hls4ml_trace.keys():
+    # if LAYER not in ("q_activation_2", "q_dense", "q_dense_1"): 
+    #     continue
+    print("Plotting layer: ", LAYER)
     if (LAYER == 'q_conv1d_linear') | (LAYER == 'q_conv1d_1_linear') \
      | (LAYER == 'q_dense_linear') | (LAYER == 'q_dense_1_linear') :
         continue
@@ -206,7 +221,7 @@ for LAYER in hls4ml_trace.keys():
     plt.xlabel('hls4ml {}'.format(LAYER))
     #plt.xlabel('hls4ml {}'.format(LAYER))
     plt.ylabel('QKeras {}'.format(LAYER))
-    print(os.getcwd() + f'/LayerTraces/profiling_{LAYER}.png')
-    plt.savefig(os.getcwd() + f'/LayerTraces/profiling_{LAYER}.png')   
+    plt.savefig(os.getcwd() + f'/LayerTraces/profiling_{LAYER}.png')
+    print("saved at: ", os.getcwd() + f'/LayerTraces/profiling_{LAYER}.png')
 
 #hls_model.build(csim=False)
